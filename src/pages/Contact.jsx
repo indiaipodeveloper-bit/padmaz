@@ -9,7 +9,7 @@ export default function Contact() {
   const [phone, setphone] = useState("");
   const handleSendQuery = async () => {
     const res = await axios.post(
-      `http://localhost:3000/padmaz/api/query`,
+      `https://padmaz-backend.onrender.com/api/query`,
       { fullname, email, queryMessage, phone },
       { withCredentials: true }
     );
