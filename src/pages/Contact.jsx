@@ -9,12 +9,13 @@ export default function Contact() {
   const [phone, setphone] = useState("");
   const handleSendQuery = async () => {
     const res = await axios.post(
+      // `http://localhost:3000/api/query`,
       `https://padmaz-backend.onrender.com/api/query`,
       { fullname, email, queryMessage, phone },
       { withCredentials: true }
     );
-    if(res.status == 200){
-      alert("Successfull")
+    if (res.status == 200) {
+      alert("Successfull");
     }
   };
   const validateForm = () => {
@@ -87,28 +88,28 @@ export default function Contact() {
       >
         <div className="flex flex-col gap-5">
           <input
-          value={fullname}
+            value={fullname}
             onChange={(e) => setfullname(e.target.value)}
             type="text"
             placeholder="Full Name"
             className="border border-[#8b4513]/20 rounded-lg px-5 py-3 focus:outline-none focus:border-[#e76f51] bg-white"
           />
           <input
-          value={email}
+            value={email}
             onChange={(e) => setemail(e.target.value)}
             type="email"
             placeholder="Email Address"
             className="border border-[#8b4513]/20 rounded-lg px-5 py-3 focus:outline-none focus:border-[#e76f51] bg-white"
           />
           <input
-          value={phone}
+            value={phone}
             onChange={(e) => setphone(e.target.value)}
             type="phone"
             placeholder="Phone Number"
             className="border border-[#8b4513]/20 rounded-lg px-5 py-3 focus:outline-none focus:border-[#e76f51] bg-white"
           />
           <textarea
-          value={queryMessage}
+            value={queryMessage}
             onChange={(e) => setqueryMessage(e.target.value)}
             placeholder="Your Query Message About any Product"
             rows="5"
