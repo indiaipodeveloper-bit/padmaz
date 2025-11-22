@@ -4,22 +4,45 @@ import { Link, NavLink } from "react-router-dom";
 import padmaz from "../assets/logos/padmaz.png";
 import { ImCross } from "react-icons/im";
 import { BiMenuAltLeft } from "react-icons/bi";
+import { FiSearch } from "react-icons/fi";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu";
+import { Button } from "../components/ui/button";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import axios from "axios";
+import { backendUrl } from "../assets/constant";
+import { useDispatch } from "react-redux";
+import { toast } from "sonner";
+import { setUserInfo } from "../redux/slices/AuthSlice";
 
 const Header = () => {
   const [isSidebar, setisSidebar] = useState(false);
+  const dispatch = useDispatch();
   const handleSidebarClick = () => {
     setisSidebar(false);
   };
+  const handleLogout = async () => {
+    try {
+      const res = await axios.post(
+        `${backendUrl}/api/auth/logout`,
+        {},
+        { withCredentials: true }
+      );
+      if (res.status == 200) {
+        toast.success(res.data);
+        dispatch(setUserInfo(undefined));
+      }
+    } catch (error) {
+      dispatch(setUserInfo(undefined));
+      toast.error(error.response.data);
+    }
+  };
   return (
     <>
-      <div className="z-10 fixed w-0 top-0">
-        <button
-          onClick={() => setisSidebar(true)}
-          className="fixed cursor-pointer z-10 left-5 top-5"
-        >
-          <BiMenuAltLeft className="text-4xl font-bold" />
-        </button>
-
+      <div className="z-50 fixed w-0 top-0">
         {/* --------------------sidebar------------------------  */}
         <div
           className={`min-h-screen sm:hidden border-r bg-white border-gray-300 transition-all py-10 duration-500 bg- ${
@@ -95,68 +118,104 @@ const Header = () => {
       </div>
 
       {/* ------------------------top bar -------------------------------- */}
-      <div className="sticky px-5 hidden sm:block py-2.5 top-0 z-20 bg- w-full bg-white border-b border-b-gray-200 ">
-        <div className="max-w-7xl text-md md:text-lg lg:text-xl mx-auto h-[70px] overflow-hidden flex items-center justify-between transition-all z-50 duration-300">
-          <div>
-            <img src={padmaz} className="w-[100px]" alt="padmaz logo" />
-          </div>
-          <nav className="flex items-center gap-8">
-            <NavLink
-              to={"/"}
-              className={({ isActive }) =>
-                `p-1 relative before:content-[''] before:absolute before:h-0.5 before:left-0 before:bottom-0  hover:before:w-full ${
-                  !isActive && "hover:before:bg-gray-300"
-                } before:transition-all duration-300 font-semibold transition ${
-                  isActive ? "before:w-full before:bg-red-500" : "before:w-0"
-                }`
-              }
-            >
-              Home
-            </NavLink>
-            <NavLink
-              to={"/menu"}
-              className={({ isActive }) =>
-                `p-1 relative hover:before:w-full ${
-                  !isActive && "hover:before:bg-gray-300"
-                } before:content-[''] before:absolute before:h-0.5 before:left-0 before:bottom-0 before:transition-all duration-300 font-semibold transition ${
-                  isActive ? "before:w-full before:bg-red-500" : "before:w-0"
-                }`
-              }
-            >
-              Menu
-            </NavLink>
-            <NavLink
-              to={"/about"}
-              className={({ isActive }) =>
-                `p-1 relative hover:before:w-full ${
-                  !isActive && "hover:before:bg-gray-300"
-                } before:content-[''] before:absolute before:h-0.5 before:left-0 before:bottom-0 before:transition-all duration-300 font-semibold transition ${
-                  isActive ? "before:w-full before:bg-red-500" : "before:w-0"
-                }`
-              }
-            >
-              About
-            </NavLink>
+      <div className="sticky px-5 py-2.5 top-0 z-20  bg- w-full bg-white border-b border-b-gray-200 ">
+        <div className="w-full sm:w-full gap-x-5 text-md md:text-lg lg:text-xl  mx-auto h-[70px] overflow-hidden flex items-center justify-between transition-all z-50 duration-300">
+          <button
+            onClick={() => setisSidebar(true)}
+            className=" cursor-pointer sm:hidden z-10 left-5 top-5"
+          >
+            <BiMenuAltLeft className="text-4xl font-bold" />
+          </button>
+          <div className="flex justify-center  items-center gap-4">
+            <div className="hidden sm:flex">
+              <img
+                src={padmaz}
+                className="min-w-[100px] max-w-[110px]"
+                alt="padmaz logo"
+              />
+            </div>
+            <nav className="hidden sm:flex items-center gap-5">
+              <NavLink
+                to={"/"}
+                className={({ isActive }) =>
+                  `p-1 relative before:content-[''] before:absolute before:h-0.5 before:left-0 before:bottom-0  hover:before:w-full ${
+                    !isActive && "hover:before:bg-gray-300"
+                  } before:transition-all duration-300 font-semibold transition ${
+                    isActive ? "before:w-full before:bg-red-500" : "before:w-0"
+                  }`
+                }
+              >
+                Home
+              </NavLink>
+              <NavLink
+                to={"/menu"}
+                className={({ isActive }) =>
+                  `p-1 relative hover:before:w-full ${
+                    !isActive && "hover:before:bg-gray-300"
+                  } before:content-[''] before:absolute before:h-0.5 before:left-0 before:bottom-0 before:transition-all duration-300 font-semibold transition ${
+                    isActive ? "before:w-full before:bg-red-500" : "before:w-0"
+                  }`
+                }
+              >
+                Menu
+              </NavLink>
+              <NavLink
+                to={"/about"}
+                className={({ isActive }) =>
+                  `p-1 relative hover:before:w-full ${
+                    !isActive && "hover:before:bg-gray-300"
+                  } before:content-[''] before:absolute before:h-0.5 before:left-0 before:bottom-0 before:transition-all duration-300 font-semibold transition ${
+                    isActive ? "before:w-full before:bg-red-500" : "before:w-0"
+                  }`
+                }
+              >
+                About
+              </NavLink>
 
-            <NavLink
-              to={"/contact-us"}
-              className={({ isActive }) =>
-                `p-1 relative hover:before:w-full ${
-                  !isActive && "hover:before:bg-gray-300"
-                } before:content-[''] before:absolute before:h-0.5 before:left-0 before:bottom-0  before:transition-all duration-300 font-semibold transition ${
-                  isActive ? "before:w-full before:bg-red-500" : "before:w-0"
-                }`
-              }
-            >
-              Contact
-            </NavLink>
-            <Link
-              to={"/menu"}
-              className="hover:rounded-3xl hover:cursor-pointer cursor-pointer bg-[#bf2a28] rounded-lg transition-all duration-300 text-white px-6 py-3 font-bold hover:opacity-90"
-            >
-              Order Now
-            </Link>
-          </nav>
+              <NavLink
+                to={"/contact-us"}
+                className={({ isActive }) =>
+                  `p-1 relative hover:before:w-full ${
+                    !isActive && "hover:before:bg-gray-300"
+                  } before:content-[''] before:absolute before:h-0.5 before:left-0 before:bottom-0  before:transition-all duration-300 font-semibold transition ${
+                    isActive ? "before:w-full before:bg-red-500" : "before:w-0"
+                  }`
+                }
+              >
+                Contact
+              </NavLink>
+            </nav>
+          </div>
+          <div className="flex items-center justify-end w-1/2 gap-5">
+            <div className="w-full sm:w-[50%] flex rounded-full border-gray-200 border ">
+              <input
+                placeholder="Search Products..."
+                type="text"
+                className="p-2.5  w-full outline-none border-none px-5"
+              />
+              <button className="text-2xl p-2.5 px-3 hover:bg-gray-200 bg-gray-100 cursor-pointer rounded-full">
+                <FiSearch />
+              </button>
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger className="cursor-pointer " asChild>
+                <Button
+                  variant="outline"
+                  className={"border-none outline-none"}
+                >
+                  <BsThreeDotsVertical className="text-xl" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="bg-transparent p-0 w-0 flex justify-center items-center outline-none border-none">
+                <Button
+                  className={"cursor-pointer w-full absolute right-5 top-5 rounded-lg font-bold"}
+                  onClick={handleLogout}
+                >
+                  Logout
+                </Button>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
     </>
