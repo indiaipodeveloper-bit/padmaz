@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { GiCupcake } from "react-icons/gi";
 import { Link, NavLink } from "react-router-dom";
 import padmaz from "../assets/logos/padmaz.png";
 import { ImCross } from "react-icons/im";
 import { BiMenuAltLeft } from "react-icons/bi";
 import { FiSearch } from "react-icons/fi";
+import { RiDeleteBin3Line } from "react-icons/ri";
+import { IoMdClose } from "react-icons/io";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,16 +16,23 @@ import { Button } from "../components/ui/button";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import axios from "axios";
 import { backendUrl } from "../assets/constant";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { setUserInfo } from "../redux/slices/AuthSlice";
+import { FaShoppingCart } from "react-icons/fa";
+import CartComponent from "../pages/Cart/CartComponent";
+import Cart from "../pages/Cart/Cart";
 
 const Header = () => {
+  const [isDrawerOpen, setisDrawerOpen] = useState(false);
+  const cartItems = useSelector((state) => state.cart.cartItems);
   const [isSidebar, setisSidebar] = useState(false);
   const dispatch = useDispatch();
   const handleSidebarClick = () => {
     setisSidebar(false);
   };
+  const searchInputRef = useRef(null);
+  const [isSearchForSmallScreens, setisSearchForSmallScreens] = useState(false);
   const handleLogout = async () => {
     try {
       const res = await axios.post(
@@ -130,7 +139,7 @@ const Header = () => {
             <div className="hidden sm:flex">
               <img
                 src={padmaz}
-                className="min-w-[100px] max-w-[110px]"
+                className="min-w-[90px] resize max-w-[110px]"
                 alt="padmaz logo"
               />
             </div>
@@ -187,28 +196,65 @@ const Header = () => {
             </nav>
           </div>
           <div className="flex items-center justify-end w-1/2 gap-5">
-            <div className="w-full sm:w-[50%] flex rounded-full border-gray-200 border ">
-              <input
-                placeholder="Search Products..."
-                type="text"
-                className="p-2.5  w-full outline-none border-none px-5"
+            <div
+              className={`cursor-pointer ${
+                isSearchForSmallScreens && "hidden"
+              } hover:bg-gray-200 transition-all duration-150 p-2 rounded-full relative`}
+            >
+              <FaShoppingCart
+                onClick={(e) => setisDrawerOpen(!isDrawerOpen)}
+                className="text-2xl"
               />
-              <button className="text-2xl p-2.5 px-3 hover:bg-gray-200 bg-gray-100 cursor-pointer rounded-full">
+              <div className="h-5 w-5 absolute bg-[#bf2a28] text-white rounded-full right-0 bottom-0 flex text-sm  justify-center items-center">
+                {cartItems.length}
+              </div>
+            </div>
+            <div
+              className={`[@media(min-width:885px)]:w-[70%] ${
+                isSearchForSmallScreens && "min-w-[200px]"
+              } lg:w-[50%] flex rounded-full border-gray-200 border`}
+            >
+              <input
+                onBlur={() => setisSearchForSmallScreens(false)}
+                placeholder="Search Products..."
+                ref={searchInputRef}
+                type="text"
+                className={`[@media(min-width:885px)]:p-2.5 w-0 ${
+                  isSearchForSmallScreens && "w-full p-2.5 px-5"
+                } [@media(min-width:885px)]:w-full outline-none border-none [@media(min-width:885px)]:px-5`}
+              />
+              <button
+                onClick={() => {
+                  if (window.innerWidth < 885) {
+                    setisSearchForSmallScreens(true);
+                    searchInputRef.current.focus();
+                  }
+                }}
+                className="text-2xl p-2.5 px-3 hover:bg-gray-200 bg-gray-100 cursor-pointer rounded-full"
+              >
                 <FiSearch />
               </button>
             </div>
+            <Cart
+              isDrawerOpen={isDrawerOpen}
+              setisDrawerOpen={setisDrawerOpen}
+            />
             <DropdownMenu>
               <DropdownMenuTrigger className="cursor-pointer " asChild>
                 <Button
                   variant="outline"
-                  className={"border-none outline-none"}
+                  className={`${
+                    isSearchForSmallScreens && "hidden"
+                  } outline-none border-none`}
                 >
-                  <BsThreeDotsVertical className="text-xl" />
+                  <BsThreeDotsVertical className="" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-transparent p-0 w-0 flex justify-center items-center outline-none border-none">
                 <Button
-                  className={"cursor-pointer w-full absolute right-5 top-5 rounded-lg font-bold"}
+                  className={
+                    "cursor-pointer w-full absolute right-5 top-5 rounded-lg font-bold"
+                  }
                   onClick={handleLogout}
                 >
                   Logout

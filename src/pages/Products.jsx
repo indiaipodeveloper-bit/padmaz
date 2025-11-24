@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Dropdown } from 'primereact/dropdown';
+import { Dropdown } from "primereact/dropdown";
 
 export default function Products() {
   const images = import.meta.glob("/src/assets/products/*.{png,jpg,jpeg,svg}", {
@@ -163,10 +163,12 @@ export default function Products() {
   const [search, setsearch] = useState("");
   const [selectCategory, setselectCategory] = useState("");
 
-  const FilteredProducts = products.filter((e) =>
-    e.title.includes(selectCategory)
-  );
+  const FilteredProducts = products.filter((e) => {
+    if (selectCategory === "All Products") return;
+    return e.title.includes(selectCategory);
+  });
   const categoryArr = [
+    "All Products",
     "Bread",
     "Biscuits",
     "Cake",

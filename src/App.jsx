@@ -14,6 +14,7 @@ import { backendUrl } from "./assets/constant";
 import { useDispatch, useSelector } from "react-redux";
 import { setUserInfo } from "./redux/slices/AuthSlice";
 import { toast } from "sonner";
+import Checkout from "./pages/CheckOut";
 
 const ProtectAuthRoute = ({ children }) => {
   const userinfo = useSelector((state) => state.auth.userinfo);
@@ -22,7 +23,7 @@ const ProtectAuthRoute = ({ children }) => {
 
 const ProtectPrivateRoute = ({ children }) => {
   const userinfo = useSelector((state) => state.auth.userinfo);
-  return !!userinfo ? children : <Navigate to={"/auth"}  />;
+  return !!userinfo ? children : <Navigate to={"/auth"} />;
 };
 
 export default function App() {
@@ -39,9 +40,7 @@ export default function App() {
         if (res.status == 200) {
           dispatch(setUserInfo(res.data.user));
         }
-      } catch (error) {
-        toast.error(error.response.data)
-      }
+      } catch (error) {}
     };
 
     const lenis = new Lenis({
@@ -68,7 +67,7 @@ export default function App() {
 
       <div className="min-h-screen">
         <Routes>
-          <Route path="/*" element={<Navigate to={"/"} />} />
+          {/* <Route path="/*" element={<Navigate to={"/"} />} /> */}
           <Route
             path="/"
             element={
@@ -90,6 +89,14 @@ export default function App() {
             element={
               <ProtectPrivateRoute>
                 <Products />
+              </ProtectPrivateRoute>
+            }
+          />
+          <Route
+            path="/check-out"
+            element={
+              <ProtectPrivateRoute>
+                <Checkout />
               </ProtectPrivateRoute>
             }
           />
