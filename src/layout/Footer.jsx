@@ -40,9 +40,9 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-[#f8f1e2]/20 pt-6 text-sm">
-          © {new Date().getFullYear()} Bite Bliss. All Rights Reserved.
+          © {new Date().getFullYear()} footer
           <br />
-          Crafted with ❤️ and 🍪 by Bite Bliss Bakers.
+          footer
         </div>
       </div>
     </motion.footer>

@@ -11,7 +11,7 @@ export const ItemcategoryArr = [
   "Sweets",
 ];
 
-export const [products, setproducts] = useState([
+export const products = [
   {
     title: "Bread",
     des: "Soft and freshly baked classic bread loaf.",
@@ -162,4 +162,4 @@ export const [products, setproducts] = useState([
     img: "/src/assets/transfatrusk.jpeg",
     price: "Rs 100",
   },
-]);
+];

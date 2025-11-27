@@ -9,12 +9,14 @@ import About from "./pages/About";
 import "./App.css";
 import Products from "./pages/Products";
 import Auth from "./pages/Auth";
-import axios from "axios";
+import axios, { all } from "axios";
 import { backendUrl } from "./assets/constant";
 import { useDispatch, useSelector } from "react-redux";
 import { setUserInfo } from "./redux/slices/AuthSlice";
-import { toast } from "sonner";
 import Checkout from "./pages/CheckOut";
+import { SetCartItems } from "./redux/slices/CartSlice";
+import { setAllProducts } from "./redux/slices/ProductSlice";
+import CartPage from "./pages/CartPage";
 
 const ProtectAuthRoute = ({ children }) => {
   const userinfo = useSelector((state) => state.auth.userinfo);
@@ -28,6 +30,7 @@ const ProtectPrivateRoute = ({ children }) => {
 
 export default function App() {
   const userinfo = useSelector((state) => state.auth.userinfo);
+  const allProducts = useSelector((state) => state.products.allProducts);
   const location = useLocation();
   const dispatch = useDispatch();
 
@@ -39,26 +42,47 @@ export default function App() {
         });
         if (res.status == 200) {
           dispatch(setUserInfo(res.data.user));
+          dispatch(SetCartItems(res.data.user.productsInCart));
         }
       } catch (error) {}
     };
 
-    const lenis = new Lenis({
-      duration: 2,
-      smooth: true,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    });
-
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
+    const getAllProducts = async () => {
+      const res = await axios.get(`${backendUrl}/api/products/all-products`, {
+        withCredentials: true,
+      });
+      if (res.status == 200) {
+        dispatch(setAllProducts(res.data.allProducts));
+      }
+    };
 
     if (!userinfo) {
       getUserDetails();
     }
+
+    // if (userinfo) {
+    //   if (allProducts.length) {
+    //     return;
+    //   } else {
+    //     console.log("no length calling func")
+    //     getAllProducts();
+    //   }
+    // }
+
+    getAllProducts();
+
+    // const lenis = new Lenis({
+    //   duration: 2,
+    //   smooth: true,
+    //   easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    // });
+
+    // function raf(time) {
+    //   lenis.raf(time);
+    //   requestAnimationFrame(raf);
+    // }
+
+    // requestAnimationFrame(raf);
   }, []);
 
   return (
@@ -67,7 +91,7 @@ export default function App() {
 
       <div className="min-h-screen">
         <Routes>
-          {/* <Route path="/*" element={<Navigate to={"/"} />} /> */}
+          <Route path="/*" element={<Navigate to={"/"} />} />
           <Route
             path="/"
             element={
@@ -89,6 +113,15 @@ export default function App() {
             element={
               <ProtectPrivateRoute>
                 <Products />
+              </ProtectPrivateRoute>
+            }
+          />
+
+          <Route
+            path="/cart"
+            element={
+              <ProtectPrivateRoute>
+                <CartPage />
               </ProtectPrivateRoute>
             }
           />

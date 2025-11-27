@@ -1,12 +1,10 @@
 import React, { useRef, useState } from "react";
 import { GiCupcake } from "react-icons/gi";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import padmaz from "../assets/logos/padmaz.png";
 import { ImCross } from "react-icons/im";
 import { BiMenuAltLeft } from "react-icons/bi";
 import { FiSearch } from "react-icons/fi";
-import { RiDeleteBin3Line } from "react-icons/ri";
-import { IoMdClose } from "react-icons/io";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,11 +18,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { setUserInfo } from "../redux/slices/AuthSlice";
 import { FaShoppingCart } from "react-icons/fa";
-import CartComponent from "../pages/Cart/CartComponent";
 import Cart from "../pages/Cart/Cart";
 
 const Header = () => {
   const [isDrawerOpen, setisDrawerOpen] = useState(false);
+  const location = useLocation();
   const cartItems = useSelector((state) => state.cart.cartItems);
   const [isSidebar, setisSidebar] = useState(false);
   const dispatch = useDispatch();
@@ -197,19 +195,6 @@ const Header = () => {
           </div>
           <div className="flex items-center justify-end w-1/2 gap-5">
             <div
-              className={`cursor-pointer ${
-                isSearchForSmallScreens && "hidden"
-              } hover:bg-gray-200 transition-all duration-150 p-2 rounded-full relative`}
-            >
-              <FaShoppingCart
-                onClick={(e) => setisDrawerOpen(!isDrawerOpen)}
-                className="text-2xl"
-              />
-              <div className="h-5 w-5 absolute bg-[#bf2a28] text-white rounded-full right-0 bottom-0 flex text-sm  justify-center items-center">
-                {cartItems.length}
-              </div>
-            </div>
-            <div
               className={`[@media(min-width:885px)]:w-[70%] ${
                 isSearchForSmallScreens && "min-w-[200px]"
               } lg:w-[50%] flex rounded-full border-gray-200 border`}
@@ -239,6 +224,24 @@ const Header = () => {
               isDrawerOpen={isDrawerOpen}
               setisDrawerOpen={setisDrawerOpen}
             />
+
+            {location.pathname !== "/check-out" && (
+              <div
+                className={`cursor-pointer ${
+                  isSearchForSmallScreens && "hidden"
+                } hover:bg-gray-200 transition-all duration-150 p-2 rounded-full relative`}
+              >
+                <FaShoppingCart
+                  onClick={(e) => setisDrawerOpen(!isDrawerOpen)}
+                  className="text-2xl"
+                />
+                {!!cartItems.length && (
+                  <div className="h-5 w-5 absolute bg-[#bf2a28] text-white rounded-full -right-1 bottom-0 flex text-sm  justify-center items-center">
+                    {cartItems.length}
+                  </div>
+                )}
+              </div>
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger className="cursor-pointer " asChild>
                 <Button

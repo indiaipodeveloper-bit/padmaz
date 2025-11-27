@@ -22,23 +22,23 @@ export default function Auth() {
 
   const validateform = () => {
     if (!isLogin && !formData.name) {
-      toast.error("Name is Required")
+      toast.error("Name is Required");
       return false;
     }
     if (!formData.email) {
-      toast.error("Email is Required")
+      toast.error("Email is Required");
       return false;
     }
     if (!isLogin && !formData.phone) {
-      toast.error("Phone Number is Required")
+      toast.error("Phone Number is Required");
       return false;
     }
     if (!formData.password) {
-      toast.error("Password is Required")
+      toast.error("Password is Required");
       return false;
     }
     if (!isLogin && !formData.confirmPassword) {
-      toast.error("Confirm Password is Required")
+      toast.error("Confirm Password is Required");
       return false;
     }
     return true;
@@ -77,10 +77,10 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center  justify-center">
-      <div className="w-full h-screen  justify-center items-center gap-10 flex">
+    <div className="min-h-screen flex items-center overflow-x-hidden justify-center">
+      <div className="w-full h-screen flex-wrap justify-center items-center gap-x-5 flex">
         {/* Logo & Header */}
-        <div className="text-center mb-8">
+        <div className="text-center">
           <div className="w-40 h-40 rounded-full mx-auto mb-4 flex items-center justify-center">
             <img src={padmazLogo} alt="" />
           </div>
@@ -96,7 +96,7 @@ export default function Auth() {
 
         {/* Auth Card */}
         <div className="">
-          <div className="bg-white min-w-md rounded-2xl shadow-xl p-8 border border-amber-100">
+          <div className="bg-white min-w-md rounded-2xl shadow-xl px-8 py-5 border border-amber-100">
             {/* Toggle Buttons */}
             <div className="flex mb-8 bg-gray-100 rounded-xl p-1">
               <button
@@ -296,7 +296,7 @@ export default function Auth() {
           </div>
 
           {/* Footer Text */}
-          <p className="text-center text-gray-500 mt-6 text-sm">
+          <p className="text-center text-gray-500 mt-6 mb-5 text-sm">
             {isLogin ? "Don't have an account? " : "Already have an account? "}
             <button
               onClick={() => setIsLogin(!isLogin)}

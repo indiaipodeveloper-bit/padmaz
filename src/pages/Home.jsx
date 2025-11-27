@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import rusk from "../assets/products/rusk.png";
 import bread from "../assets/products/bread.png";
 import biscuits from "../assets/products/buscuits.png";
@@ -9,43 +9,85 @@ import cupcakes from "../assets/products/cupcakes.png";
 import sweets from "../assets/products/sweets.png";
 import namkeen from "../assets/products/namkeen.png";
 import breadlogo from "../assets/logos/breadLogo.png";
+import { useDispatch, useSelector } from "react-redux";
+import { AddProductToCart } from "../redux/slices/CartSlice";
+import axios from "axios";
+import { backendUrl } from "../assets/constant";
+import { toast } from "sonner";
+
+export const checkIsProductAlreadyInCart = (e) => {
+  const cartItems = useSelector((state) => state.cart.cartItems);
+
+  let item = cartItems.find((item) => {
+    return item.title == e.title;
+  });
+  if (!!item) {
+    return true;
+  }
+  return false;
+};
+
+// add to cart in users's data  on backend
+export function AddProductToUserDetailsOnBackend(bodyitem = {}) {
+  setTimeout(async () => {
+    try {
+      const res = await axios.post(
+        `${backendUrl}/api/cart/add-to-cart`,
+        { item: bodyitem },
+        { withCredentials: true }
+      );
+    } catch (error) {
+      toast.error(error.response.data);
+    }
+  }, 3000);
+}
 
 export default function Home() {
+  const cartItems = useSelector((state) => state.cart.cartItems);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   let products = [
     {
       title: "Rusk",
       des: "Spicy Little Finger Toast",
       img: rusk,
+      price: 40,
     },
     {
       title: "Bread",
       des: "Happy Morning Bread, Royal Sliced Bread, Sunshine Sandwich Bread",
       img: bread,
+      price: 30,
     },
     {
       title: "Bakery Biscuits",
       des: "Meetha Namkeen Biscuit, Peanut Biscuits, Peanut Cookie",
       img: biscuits,
+      price: 50,
     },
     {
       title: "Cakes",
       des: "Butter Cake, Choco Cake, Cookies",
       img: cake,
+      price: 120,
     },
     {
       title: "Cup Cakes",
       des: "Chocolate Cup Cake, Red Velvet Cup Cake, Strawberry Cup Cake",
       img: cupcakes,
+      price: 25,
     },
     {
       title: "Sweets",
       des: "Doodh Malai Toast, Corn Bite",
       img: sweets,
+      price: 60,
     },
     {
       title: "Namkeen",
       des: "Namkeen Biscuits",
       img: namkeen,
+      price: 35,
     },
   ];
 
@@ -55,16 +97,19 @@ export default function Home() {
       title: "Butter Toast",
       des: "Crispy buttered toast perfect for mornings",
       img: rusk,
+      price: 20,
     },
     {
       title: "Fruit Bread",
       des: "Soft, sweet bread loaded with dry fruits",
       img: bread,
+      price: 35,
     },
     {
       title: "Tea Biscuits",
       des: "Light and crunchy biscuits for tea time",
       img: biscuits,
+      price: 25,
     },
   ];
 
@@ -73,16 +118,19 @@ export default function Home() {
       title: "Chocolate Cake Slice",
       des: "Rich and moist chocolate delight",
       img: cake,
+      price: 45,
     },
     {
       title: "Mini Cup Cakes",
       des: "Soft and fluffy bite-size cupcakes",
       img: cupcakes,
+      price: 30,
     },
     {
       title: "Masala Namkeen Mix",
       des: "Crunchy, spicy evening snack mix",
       img: namkeen,
+      price: 40,
     },
   ];
 
@@ -148,11 +196,31 @@ export default function Home() {
               <div className="flex-1">
                 <p className="text-2xl font-bold mb-2">{item.title}</p>
                 <p className="mb-3">{item.des}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-lg xl:text-2xl font-bold ">30.99 Rs </span>
-                  <button className="text-white  bg-[#bf2a28] hover:bg-[#e5ac55] px-6 py-2 font-bold rounded-sm transition cursor-pointer">
-                    Order
-                  </button>
+                <span className="text-lg xl:text-2xl font-bold ">
+                  30.99 Rs{" "}
+                </span>
+                <div className="flex items-end flex-col gap-2.5 justify-between">
+                  {checkIsProductAlreadyInCart(item) ? (
+                    <button
+                      onClick={() => navigate("/cart")}
+                      className="text-white  bg-[#bf2a28] hover:bg-[#e5ac55] px-6 py-2 font-bold rounded-sm transition cursor-pointer"
+                    >
+                      Go To Cart
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        dispatch(AddProductToCart({ ...item, quantity: 1 }));
+                        AddProductToUserDetailsOnBackend({
+                          ...item,
+                          quantity: 1,
+                        });
+                      }}
+                      className="text-white  bg-[#bf2a28] hover:bg-[#e5ac55] px-6 py-2 font-bold rounded-sm transition cursor-pointer"
+                    >
+                      Add To Cart
+                    </button>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -192,9 +260,28 @@ export default function Home() {
               <p className="text-2xl font-bold mb-2">{item.title}</p>
               <p className="text-gray-700 mb-6 grow">{item.des}</p>
 
-              <button className="mt-auto w-full cursor-pointer bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300">
-                Order Now
-              </button>
+              {/* <button className="mt-auto w-full cursor-pointer bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300">
+                Add To Cart
+              </button> */}
+
+              {checkIsProductAlreadyInCart(item) ? (
+                <button
+                  onClick={() => navigate("/cart")}
+                  className="mt-auto w-full cursor-pointer bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300"
+                >
+                  Go To Cart
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    dispatch(AddProductToCart({ ...item, quantity: 1 }));
+                    AddProductToUserDetailsOnBackend({ ...item, quantity: 1 });
+                  }}
+                  className="mt-auto w-full cursor-pointer bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300"
+                >
+                  Add To Cart
+                </button>
+              )}
             </motion.div>
           ))}
         </div>
@@ -230,9 +317,28 @@ export default function Home() {
               />
               <p className="text-2xl font-bold mb-2">{item.title}</p>
               <p className="text-gray-700 mb-6">{item.des}</p>
-              <button className="w-full cursor-pointer bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300">
-                Order Now
-              </button>
+
+              {/* <button className="w-full cursor-pointer bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300">
+                Add To Cart
+              </button> */}
+              {checkIsProductAlreadyInCart(item) ? (
+                <button
+                  onClick={() => navigate("/cart")}
+                  className="w-full cursor-pointer bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300"
+                >
+                  Go To Cart
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    dispatch(AddProductToCart({ ...item, quantity: 1 }));
+                    AddProductToUserDetailsOnBackend({ ...item, quantity: 1 });
+                  }}
+                  className="w-full cursor-pointer bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300"
+                >
+                  Add To Cart
+                </button>
+              )}
             </motion.div>
           ))}
         </div>
