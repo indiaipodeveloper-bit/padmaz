@@ -226,21 +226,19 @@ const Header = () => {
             />
 
             {location.pathname !== "/check-out" && (
-              <div
+              <button
+                onClick={(e) => setisDrawerOpen(!isDrawerOpen)}
                 className={`cursor-pointer ${
                   isSearchForSmallScreens && "hidden"
                 } hover:bg-gray-200 transition-all duration-150 p-2 rounded-full relative`}
               >
-                <FaShoppingCart
-                  onClick={(e) => setisDrawerOpen(!isDrawerOpen)}
-                  className="text-2xl"
-                />
+                <FaShoppingCart className="text-2xl" />
                 {!!cartItems.length && (
                   <div className="h-5 w-5 absolute bg-[#bf2a28] text-white rounded-full -right-1 bottom-0 flex text-sm  justify-center items-center">
                     {cartItems.length}
                   </div>
                 )}
-              </div>
+              </button>
             )}
             <DropdownMenu>
               <DropdownMenuTrigger className="cursor-pointer " asChild>

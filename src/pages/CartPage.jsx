@@ -4,62 +4,33 @@ import { FiChevronLeft, FiTrash2, FiPlus, FiMinus } from "react-icons/fi";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { DecreaseQuantity, IncreaseQuantity } from "../redux/slices/CartSlice";
+import {
+  DecreaseQuantity,
+  IncreaseQuantity,
+  RemoveProductFromCart,
+} from "../redux/slices/CartSlice";
+import { RemoveProductFromUserDetailsOnBackend } from "./Cart/CartComponent";
 
 export default function CartPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const cartItemsFromStore = useSelector((state) => state.cart.cartItems || []);
-
-  const [localCart, setLocalCart] = useState(
-    cartItemsFromStore.map((p) => ({ ...p }))
-  );
-
-  useEffect(() => {
-    setLocalCart(cartItemsFromStore.map((p) => ({ ...p })));
-  }, [cartItemsFromStore]);
+  const cartItems = useSelector((state) => state.cart.cartItems || []);
 
   const subtotal = useMemo(
     () =>
-      localCart.reduce(
+      cartItems.reduce(
         (acc, i) => acc + Number(i.price) * Number(i.quantity),
         0
       ),
-    [localCart]
+    [cartItems]
   );
+  console.log(subtotal);
 
   const shippingCharges = 40;
 
-  const updateQuantity = (id, nextQty) => {
-    if (nextQty < 1) return;
-    const updated = localCart.map((it) =>
-      it.title === id ? { ...it, quantity: nextQty } : it
-    );
-    setLocalCart(updated);
-
-    try {
-      dispatch({
-        type: "updateCartItemQuantity",
-        payload: { id, quantity: nextQty },
-      });
-    } catch (e) {
-      console.log("Dispatch updateCartItemQuantity not wired", { id, nextQty });
-    }
-  };
-
-  const removeItem = (id) => {
-    const updated = localCart.filter((it) => it.title !== id);
-    setLocalCart(updated);
-
-    try {
-      dispatch({ type: "removeFromCart", payload: { id } });
-    } catch (e) {
-      console.log("Dispatch removeFromCart not wired", { id });
-    }
-  };
-
   const handleProceedToCheckout = () => {
-    if (!localCart.length) {
+    console.log("clicked");
+    if (!cartItems.length) {
       toast.error("No Items In Your Cart");
       return;
     }
@@ -68,8 +39,8 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 font-sans">
-      <div className="max-w-6xl mx-auto max-h-[850px] bg-white rounded-2xl shadow-lg overflow-hidden grid grid-cols-1 lg:grid-cols-3">
-        <div className="lg:col-span-2 max-h-[50%] overflow-auto p-5 lg:px-14">
+      <div className="max-w-6xl mx-auto max-h-[850px]  rounded-2xl shadow-lg overflow-hidden grid grid-cols-1 lg:grid-cols-3">
+        <div className="lg:col-span-2  h-full max-h-[750px]  overflow-auto p-5 lg:px-14">
           <div className="flex items-center justify-between mb-2.5">
             <div className="flex items-center gap-4">
               <button
@@ -86,13 +57,13 @@ export default function CartPage() {
             <div className="flex items-center gap-3 text-sm text-gray-600">
               <div className="flex items-center gap-2">
                 <span className="text-gray-400">Items</span>
-                <div className="font-semibold">{localCart.length}</div>
+                <div className="font-semibold">{cartItems.length}</div>
               </div>
             </div>
           </div>
 
           <div className="space-y-4">
-            {localCart.length === 0 && (
+            {cartItems.length === 0 && (
               <div className="p-8 bg-white rounded-xl border border-dashed border-gray-200 text-center">
                 <p className="font-semibold text-gray-700 mb-2">
                   Your cart is empty
@@ -103,7 +74,7 @@ export default function CartPage() {
               </div>
             )}
 
-            {localCart.map((p) => (
+            {cartItems.map((p) => (
               <div
                 key={p.title}
                 className="flex items-center gap-4 border rounded-xl p-4 bg-white"
@@ -118,8 +89,11 @@ export default function CartPage() {
                   <div className="flex items-center justify-between">
                     <p className="font-semibold text-gray-800">{p.title}</p>
                     <button
-                      onClick={() => removeItem(p.title)}
-                      className="p-2 rounded-md bg-white border border-[#e9e6e2]"
+                      onClick={() => {
+                        dispatch(RemoveProductFromCart(p));
+                        RemoveProductFromUserDetailsOnBackend(p);
+                      }}
+                      className="p-2 cursor-pointer text-red-500 rounded-md bg-white border "
                     >
                       <FiTrash2 />
                     </button>
@@ -129,19 +103,15 @@ export default function CartPage() {
                   <div className="mt-3 flex items-center gap-3">
                     <div className="flex items-center rounded-full border border-[#e9e6e2] overflow-hidden">
                       <button
-                        onClick={() =>
-                          dispatch(DecreaseQuantity(p))
-                        }
-                        className="p-3"
+                        onClick={() => dispatch(DecreaseQuantity(p))}
+                        className="p-3 cursor-pointer"
                       >
                         <FiMinus />
                       </button>
                       <div className="px-4 py-3">{p.quantity}</div>
                       <button
-                        onClick={() =>
-                          dispatch(IncreaseQuantity(p))
-                        }
-                        className="p-3"
+                        onClick={() => dispatch(IncreaseQuantity(p))}
+                        className="p-3 cursor-pointer"
                       >
                         <FiPlus />
                       </button>
@@ -166,7 +136,7 @@ export default function CartPage() {
             <p className="text-xl font-semibold mb-6">Order summary</p>
 
             <div className="space-y-4 max-h-[480px] overflow-y-auto">
-              {localCart.map((p) => (
+              {cartItems.map((p) => (
                 <div
                   key={p.title}
                   className="flex items-center gap-4 bg-white rounded-xl p-3 border"
@@ -212,10 +182,12 @@ export default function CartPage() {
             </div>
 
             <button
-              onClick={handleProceedToCheckout}
-              disabled={!localCart.length}
+              onClick={() => {
+                handleProceedToCheckout();
+              }}
+              disabled={!cartItems.length || subtotal < 200 ? true : false}
               className={`mt-6 w-full rounded-xl py-3 font-bold text-white ${
-                localCart.length
+                !cartItems.length || subtotal > 200
                   ? "bg-[#bf2a28] hover:bg-[#e5ac55] cursor-pointer"
                   : "bg-gray-400 cursor-not-allowed"
               }`}

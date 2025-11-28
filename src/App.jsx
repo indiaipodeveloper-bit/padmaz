@@ -60,16 +60,9 @@ export default function App() {
       getUserDetails();
     }
 
-    // if (userinfo) {
-    //   if (allProducts.length) {
-    //     return;
-    //   } else {
-    //     console.log("no length calling func")
-    //     getAllProducts();
-    //   }
-    // }
-
-    getAllProducts();
+    if (!allProducts.length) {
+        getAllProducts();
+    }
 
     // const lenis = new Lenis({
     //   duration: 2,

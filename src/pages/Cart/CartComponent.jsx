@@ -18,7 +18,6 @@ export function RemoveProductFromUserDetailsOnBackend(bodyitem = {}) {
         { withCredentials: true }
       );
     } catch (error) {
-      console.log(error);
       toast.error(error.response.data);
     }
   }, 3000);

@@ -4,6 +4,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FiShoppingCart, FiCreditCard } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
+import axios from "axios";
+import { backendUrl } from "../assets/constant";
 
 const DESIGN_SCREENSHOT =
   "/mnt/data/A_checkout_page_for_an_online_furniture_store_is_d.png";
@@ -11,7 +13,6 @@ const DESIGN_SCREENSHOT =
 export default function Checkout() {
   const user = useSelector((state) => state.auth.userinfo);
   const cartItems = useSelector((state) => state.cart.cartItems);
-  console.log(cartItems);
   const navigate = useNavigate();
   const [isTermsAndConditions, setisTermsAndConditions] = useState(false);
   const location = useLocation();
@@ -23,6 +24,12 @@ export default function Checkout() {
 
   const shippingCharges = 40;
 
+  const PlaceOrder = async () => {
+    console.log({ name, email, phoneNumber, city, zipCode });
+    // const res = await axios.post(`${backendUrl}/api/order/place-order`)
+    // console.log(res)
+  };
+
   const validateform = () => {
     if (!name) {
       toast.error("Name is Required");
@@ -32,14 +39,15 @@ export default function Checkout() {
       phoneNumber.split("").every((e) => typeof parseInt(e) === Number) ||
       phoneNumber.length < 10
     ) {
-      alert("Enter a valid Phone Number");
+      console.log(phoneNumber);
+      toast.error("Enter a valid Phone Number split");
       return false;
     }
 
     const indianPhoneRegex = /^(?:\+91[\s-]?|0)?[6-9]\d{9}$/;
 
-    if (!indianPhoneRegex.test(formData.phoneNumber.trim())) {
-      alert("Enter a valid Indian phone number");
+    if (!indianPhoneRegex.test(phoneNumber.trim())) {
+      toast.error("Enter a valid Indian phone number");
       return false;
     }
 
@@ -134,6 +142,7 @@ export default function Checkout() {
                   <p>+91</p>
                 </div>
                 <input
+                  onChange={(e) => setphoneNumber(e.target.value)}
                   type="tel"
                   placeholder="Enter phone number"
                   className="flex-1 block w-full rounded-xl border border-[#e9e6e2] shadow-sm p-4"
@@ -210,7 +219,10 @@ export default function Checkout() {
                     />
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
-                        <p className="font-semibold text-gray-800">{p.title}</p>
+                        <div className="">
+                          <p className="font-semibold text-gray-800">{p.title}</p>
+                          <p className="font-light text-gray-800 text-sm">{p.description}</p>
+                        </div>
                         <p className="text-sm text-gray-600">{p.quantity}x</p>
                       </div>
                       <p className="text-sm text-gray-700 mt-1">Rs {p.price}</p>
@@ -246,13 +258,14 @@ export default function Checkout() {
               </div>
 
               <button
-                disabled={isTermsAndConditions ? false : true}
+                disabled={isTermsAndConditions || subtotal < 200 ? false : true}
                 onClick={() => {
                   if (validateform()) {
+                    PlaceOrder();
                   }
                 }}
                 className={`${
-                  isTermsAndConditions
+                  isTermsAndConditions && subtotal > 200
                     ? "mt-6 w-full cursor-pointer bg-[#bf2a28] hover:bg-[#e5ac55] text-white rounded-xl py-3 font-bold"
                     : "bg-gray-400 text-white mt-6 w-full cursor-not-allowed rounded-xl py-3 font-bold"
                 }`}

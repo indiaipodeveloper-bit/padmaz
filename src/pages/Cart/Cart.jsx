@@ -28,7 +28,7 @@ const Cart = ({ isDrawerOpen, setisDrawerOpen }) => {
           <button onClick={()=>{
             navigate("/cart")
             setisDrawerOpen(false)
-          }} className="text-red-500 hover:underline hover:text-red-400" >
+          }} className="text-red-500 hover:underline cursor-pointer hover:text-red-400" >
             Go To Cart
           </button>
         </div>
