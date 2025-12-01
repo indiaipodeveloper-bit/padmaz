@@ -17,14 +17,17 @@ import Checkout from "./pages/CheckOut";
 import { SetCartItems } from "./redux/slices/CartSlice";
 import { setAllProducts } from "./redux/slices/ProductSlice";
 import CartPage from "./pages/CartPage";
+import MyOrders from "./pages/MyOrders";
 
 const ProtectAuthRoute = ({ children }) => {
   const userinfo = useSelector((state) => state.auth.userinfo);
+  // const userinfo = true;
   return !!userinfo ? <Navigate to={"/"} /> : children;
 };
 
 const ProtectPrivateRoute = ({ children }) => {
   const userinfo = useSelector((state) => state.auth.userinfo);
+  // const userinfo = true;
   return !!userinfo ? children : <Navigate to={"/auth"} />;
 };
 
@@ -61,7 +64,7 @@ export default function App() {
     }
 
     if (!allProducts.length) {
-        getAllProducts();
+      getAllProducts();
     }
 
     // const lenis = new Lenis({
@@ -84,7 +87,7 @@ export default function App() {
 
       <div className="min-h-screen">
         <Routes>
-          <Route path="/*" element={<Navigate to={"/"} />} />
+          {/* <Route path="/*" element={<Navigate to={"/"} />} /> */}
           <Route
             path="/"
             element={
@@ -115,6 +118,14 @@ export default function App() {
             element={
               <ProtectPrivateRoute>
                 <CartPage />
+              </ProtectPrivateRoute>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <ProtectPrivateRoute>
+                <MyOrders />
               </ProtectPrivateRoute>
             }
           />

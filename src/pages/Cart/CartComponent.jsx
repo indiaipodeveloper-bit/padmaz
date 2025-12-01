@@ -47,7 +47,8 @@ const CartComponent = () => {
                     <div className="">
                       <span className="text-lg">{prod.title}</span>
                       <p className="text-sm text-gray-500">
-                        {prod.description}</p>
+                        {prod.description}
+                      </p>
                     </div>
                     <div className="flex items-center mt-2">
                       <button
@@ -83,8 +84,9 @@ const CartComponent = () => {
           })}
         </>
       ) : (
-        <div className="font-bold text-xl absolute left-1/4 top-1/4 text-center">
+        <div className="font-bold  my-[50%] text-xl text-center">
           No Products in Your Cart
+          <p className=""></p>
         </div>
       )}
     </div>

@@ -56,54 +56,52 @@ export default function Products() {
       </div>
 
       <div className="py-20 px-4">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {FilteredProducts.map((item, i) => (
             <motion.div
               key={item._id}
-              className="rounded-xl p-8 flex flex-col items-center justify-between cursor-pointer shadow-md hover:shadow-2xl border border-[#8b4513]/10 hover:-translate-y-2 transition-all duration-300 bg-white"
+              className="rounded-xl  md:text-start text-center font-semibold  md:gap-5 gap-2.5 overflow-hidden flex-wrap justify-center items-start flex  shadow-md hover:shadow-2xl border border-[#8b4513]/10 hover:-translate-y-2 transition-all duration-300"
               whileHover={{ scale: 1.02 }}
               initial={{ y: 40 }}
               whileInView={{ y: 0 }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
+              transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <div className="w-56 h-56 flex items-center rounded-lg justify-center overflow-hidden mb-6">
+              <div className="flex items-center w-full justify-center  rounded-lg ">
                 <img
                   src={item.img}
-                  alt={item.title}
-                  className="w-full h-full  object-contain transition-transform duration-300 hover:scale-105"
+                  className="w-full aspect-square max-w-[400px] max-h-[300px] rounded-2xl"
+                  alt=""
                 />
               </div>
-              <div className="text-2xl font-bold mb-2">{item.title}</div>
-              <p className="text-gray-600 mb-4 text-center">
-                {item.description}
-              </p>
-              <div className="flex items-center justify-between w-full mt-auto">
-                <span className="text-2xl font-bold text-[#8b4513]">
-                  {item.price}
-                </span>
 
-                {checkIsProductAlreadyInCart(item) ? (
-                  <button
-                    onClick={() => navigate("/cart")}
-                    className="text-white bg-[#bf2a28] hover:bg-[#e5ac55] px-6 py-2 font-bold rounded-md transition cursor-pointer"
-                  >
-                    Go To Cart
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      dispatch(AddProductToCart({ ...item, quantity: 1 }));
-                      AddProductToUserDetailsOnBackend({
-                        ...item,
-                        quantity: 1,
-                      });
-                    }}
-                    className="text-white bg-[#bf2a28] hover:bg-[#e5ac55] px-6 py-2 font-bold rounded-md transition cursor-pointer"
-                  >
-                    Add To Cart
-                  </button>
-                )}
+              <div className="flex text-start sm:pr-2.5 flex-col px-2.5 w-full">
+                <p className="text-2xl font-bold">{item.title}</p>
+                <p className="text-md">{item.des}</p>
+                <span className="text-xl my-2.5 font-bold ">30.99 Rs </span>
+                <div className="flex flex-col my-2.5 gap-2.5 justify-between">
+                  {checkIsProductAlreadyInCart(item) ? (
+                    <button
+                      onClick={() => navigate("/cart")}
+                      className="w-1/2 p-2.5 cursor-pointer text-sm sm:text-lg bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300"
+                    >
+                      Go To Cart
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        dispatch(AddProductToCart({ ...item, quantity: 1 }));
+                        AddProductToUserDetailsOnBackend({
+                          ...item,
+                          quantity: 1,
+                        });
+                      }}
+                      className="w-1/2 cursor-pointer text-sm sm:text-lg p-2.5 bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300"
+                    >
+                      Add To Cart
+                    </button>
+                  )}
+                </div>
               </div>
             </motion.div>
           ))}

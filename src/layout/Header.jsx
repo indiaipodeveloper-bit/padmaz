@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { GiCupcake } from "react-icons/gi";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import padmaz from "../assets/logos/padmaz.png";
 import { ImCross } from "react-icons/im";
 import { BiMenuAltLeft } from "react-icons/bi";
@@ -21,6 +21,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import Cart from "../pages/Cart/Cart";
 
 const Header = () => {
+  const navigate = useNavigate();
   const [isDrawerOpen, setisDrawerOpen] = useState(false);
   const location = useLocation();
   const cartItems = useSelector((state) => state.cart.cartItems);
@@ -251,14 +252,22 @@ const Header = () => {
                   <BsThreeDotsVertical className="" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-transparent p-0 w-0 flex justify-center items-center outline-none border-none">
+              <DropdownMenuContent className="bg-transparent my-2.5 p-0 w-0 flex flex-col mr-5 justify-center items-center outline-none border-none">
                 <Button
                   className={
-                    "cursor-pointer w-full absolute right-5 top-5 rounded-lg font-bold"
+                    "cursor-pointer w-full border-b border-b-gray-600 rounded-none font-bold"
                   }
                   onClick={handleLogout}
                 >
                   Logout
+                </Button>
+                <Button
+                  onClick={() => navigate("/orders")}
+                  className={
+                    "cursor-pointer w-full rounded-none font-bold"
+                  }
+                >
+                  My Orders
                 </Button>
               </DropdownMenuContent>
             </DropdownMenu>

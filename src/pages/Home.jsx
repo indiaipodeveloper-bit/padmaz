@@ -135,7 +135,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="p-10 ">
+    <div className="p-2">
       <div className="md:pt-2 px-4  text-center">
         <motion.div
           initial={{ y: 60 }}
@@ -155,7 +155,7 @@ export default function Home() {
             />
             <Link
               to={"/menu"}
-              className="bg-[#bf2a28] rounded-xl w-full md:w-auto mt-5 hover:rounded-4xl transition-all duration-300 text-white px-10 py-4 text-xl font-bold hover:opacity-90 cursor-pointer"
+              className="bg-[#bf2a28] rounded-xl min-w-[200px] w-[80%]  md:w-auto mt-5 hover:rounded-4xl transition-all duration-300 text-white px-10 py-4 text-xl font-bold hover:opacity-90 cursor-pointer"
             >
               View Menu
             </Link>
@@ -163,7 +163,9 @@ export default function Home() {
         </motion.div>
       </div>
 
-      <div id="menu" className="py-28 px-4">
+      
+
+      <div id="menu" className="py-10">
         <motion.p
           className="lg:text-5xl md:text-5xl text-3xl font-bold mb-12 text-center"
           initial={{ y: 40 }}
@@ -174,36 +176,34 @@ export default function Home() {
           Today’s Special
         </motion.p>
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {products.map((item) => (
             <motion.div
               key={item.des}
-              className="rounded-xl p-8 overflow-hidden flex-wrap justify-center items-center flex gap-6  shadow-md hover:shadow-2xl border border-[#8b4513]/10 hover:-translate-y-2 transition-all duration-300"
+              className="rounded-xl  md:text-start text-center font-semibold  md:gap-5 gap-2.5 overflow-hidden flex-wrap justify-center items-start flex  shadow-md hover:shadow-2xl border border-[#8b4513]/10 hover:-translate-y-2 transition-all duration-300"
               whileHover={{ scale: 1.02 }}
               initial={{ y: 40 }}
               whileInView={{ y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <div className="md:w-36 md:h-36  flex items-center justify-center shrink-0 rounded-lg shadow-sm">
+              <div className="flex items-center w-full justify-center p-2.5 rounded-lg ">
                 <img
                   src={item.img}
-                  className="w-full max-w-[300px] aspect-square"
+                  className="w-full aspect-square max-w-[400px] max-h-[300px] rounded-2xl"
                   alt=""
                 />
               </div>
 
-              <div className="flex-1">
-                <p className="text-2xl font-bold mb-2">{item.title}</p>
-                <p className="mb-3">{item.des}</p>
-                <span className="text-lg xl:text-2xl font-bold ">
-                  30.99 Rs{" "}
-                </span>
-                <div className="flex items-end flex-col gap-2.5 justify-between">
+              <div className="flex text-start sm:pr-2.5 flex-col px-5 w-full">
+                <p className="text-xl font-bold">{item.title}</p>
+                <p className="text-[15px]">{item.des}</p>
+                <span className="text-xl my-2.5 font-bold ">30.99 Rs </span>
+                <div className="flex flex-col my-2.5 gap-2.5 justify-between">
                   {checkIsProductAlreadyInCart(item) ? (
                     <button
                       onClick={() => navigate("/cart")}
-                      className="text-white  bg-[#bf2a28] hover:bg-[#e5ac55] px-6 py-2 font-bold rounded-sm transition cursor-pointer"
+                      className="w-1/2 p-2.5 cursor-pointer text-sm sm:text-lg bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300"
                     >
                       Go To Cart
                     </button>
@@ -216,7 +216,7 @@ export default function Home() {
                           quantity: 1,
                         });
                       }}
-                      className="text-white  bg-[#bf2a28] hover:bg-[#e5ac55] px-6 py-2 font-bold rounded-sm transition cursor-pointer"
+                      className="w-1/2 cursor-pointer text-sm sm:text-lg p-2.5 bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300"
                     >
                       Add To Cart
                     </button>
@@ -230,9 +230,9 @@ export default function Home() {
 
       {/* --- MORNING SPECIALS --- */}
 
-      <div className="py-20 px-4">
+      <div className="px-4">
         <motion.p
-          className="text-5xl font-bold mb-12 text-center text-[#e5ac55]"
+          className="text-3xl font-bold mb-12 text-center text-[#e5ac55]"
           initial={{ y: 40 }}
           whileInView={{ y: 0 }}
           transition={{ duration: 0.6 }}
@@ -241,56 +241,62 @@ export default function Home() {
           Morning Specials
         </motion.p>
 
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-10">
           {morningSnacks.map((item) => (
             <motion.div
-              key={item.title}
-              className="rounded-xl p-6 flex flex-col items-center text-center shadow-md hover:shadow-xl border border-[#8b4513]/10 hover:-translate-y-2 transition-all duration-300 h-full min-h-[420px]"
-              whileHover={{ scale: 1.03 }}
+              key={item.des}
+              className="rounded-xl  md:text-start text-center font-semibold  md:gap-5 gap-2.5 overflow-hidden flex-wrap justify-center items-start flex  shadow-md hover:shadow-2xl border border-[#8b4513]/10 hover:-translate-y-2 transition-all duration-300"
+              whileHover={{ scale: 1.02 }}
               initial={{ y: 40 }}
               whileInView={{ y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <img
-                src={item.img}
-                alt={item.title}
-                className="w-40 h-40 object-contain mb-4"
-              />
-              <p className="text-2xl font-bold mb-2">{item.title}</p>
-              <p className="text-gray-700 mb-6 grow">{item.des}</p>
+              <div className="flex items-center w-full justify-center  rounded-lg ">
+                <img
+                  src={item.img}
+                  className="w-full aspect-square max-w-[400px] max-h-[300px] rounded-2xl"
+                  alt=""
+                />
+              </div>
 
-              {/* <button className="mt-auto w-full cursor-pointer bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300">
-                Add To Cart
-              </button> */}
-
-              {checkIsProductAlreadyInCart(item) ? (
-                <button
-                  onClick={() => navigate("/cart")}
-                  className="mt-auto w-full cursor-pointer bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300"
-                >
-                  Go To Cart
-                </button>
-              ) : (
-                <button
-                  onClick={() => {
-                    dispatch(AddProductToCart({ ...item, quantity: 1 }));
-                    AddProductToUserDetailsOnBackend({ ...item, quantity: 1 });
-                  }}
-                  className="mt-auto w-full cursor-pointer bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300"
-                >
-                  Add To Cart
-                </button>
-              )}
+              <div className="flex text-start sm:pr-2.5 flex-col px-5 w-full ">
+                <p className="text-xl font-bold">{item.title}</p>
+                <p className="text-[15px]">{item.des}</p>
+                <span className="text-xl my-2.5 font-bold ">30.99 Rs </span>
+                <div className="flex flex-col my-2.5 gap-2.5 justify-between">
+                  {checkIsProductAlreadyInCart(item) ? (
+                    <button
+                      onClick={() => navigate("/cart")}
+                      className="w-1/2 p-2.5 cursor-pointer text-sm sm:text-lg bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300"
+                    >
+                      Go To Cart
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        dispatch(AddProductToCart({ ...item, quantity: 1 }));
+                        AddProductToUserDetailsOnBackend({
+                          ...item,
+                          quantity: 1,
+                        });
+                      }}
+                      className="w-1/2 cursor-pointer text-sm sm:text-lg p-2.5 bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300"
+                    >
+                      Add To Cart
+                    </button>
+                  )}
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>
       </div>
 
       {/* --- EVENING SPECIALS --- */}
-      <div className="py-20 px-4">
+      <div className="py-10 ">
         <motion.p
-          className="text-5xl font-bold mb-12 text-center text-[#e5ac55]"
+          className="text-4xl font-bold my-10 text-center text-[#e5ac55]"
           initial={{ y: 40 }}
           whileInView={{ y: 0 }}
           transition={{ duration: 0.6 }}
@@ -299,46 +305,53 @@ export default function Home() {
           Evening Specials
         </motion.p>
 
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-10">
           {eveningSnacks.map((item) => (
             <motion.div
-              key={item.title}
-              className="rounded-xl p-6 flex flex-col items-center text-center shadow-md hover:shadow-xl border border-[#8b4513]/10 hover:-translate-y-2 transition-all duration-300"
-              whileHover={{ scale: 1.03 }}
+              key={item.des}
+              className="rounded-xl  md:text-start text-center font-semibold  md:gap-5 gap-2.5 overflow-hidden flex-wrap justify-center items-start flex  shadow-md hover:shadow-2xl border border-[#8b4513]/10 hover:-translate-y-2 transition-all duration-300"
+              whileHover={{ scale: 1.02 }}
               initial={{ y: 40 }}
               whileInView={{ y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <img
-                src={item.img}
-                alt={item.title}
-                className="w-40 h-40 object-contain mb-4"
-              />
-              <p className="text-2xl font-bold mb-2">{item.title}</p>
-              <p className="text-gray-700 mb-6">{item.des}</p>
+              <div className="flex items-center w-full justify-center  rounded-lg ">
+                <img
+                  src={item.img}
+                  className="w-full aspect-square max-w-[400px] max-h-[300px] rounded-2xl"
+                  alt=""
+                />
+              </div>
 
-              {/* <button className="w-full cursor-pointer bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300">
-                Add To Cart
-              </button> */}
-              {checkIsProductAlreadyInCart(item) ? (
-                <button
-                  onClick={() => navigate("/cart")}
-                  className="w-full cursor-pointer bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300"
-                >
-                  Go To Cart
-                </button>
-              ) : (
-                <button
-                  onClick={() => {
-                    dispatch(AddProductToCart({ ...item, quantity: 1 }));
-                    AddProductToUserDetailsOnBackend({ ...item, quantity: 1 });
-                  }}
-                  className="w-full cursor-pointer bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300"
-                >
-                  Add To Cart
-                </button>
-              )}
+              <div className="flex text-start sm:pr-2.5 flex-col px-5 w-full ">
+                <p className="text-xl font-bold">{item.title}</p>
+                <p className="text-[15px]">{item.des}</p>
+                <span className="text-xl my-2.5 font-bold ">30.99 Rs </span>
+                <div className="flex flex-col my-2.5 gap-2.5 justify-between">
+                  {checkIsProductAlreadyInCart(item) ? (
+                    <button
+                      onClick={() => navigate("/cart")}
+                      className="w-1/2 p-2.5 cursor-pointer text-sm sm:text-lg bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300"
+                    >
+                      Go To Cart
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        dispatch(AddProductToCart({ ...item, quantity: 1 }));
+                        AddProductToUserDetailsOnBackend({
+                          ...item,
+                          quantity: 1,
+                        });
+                      }}
+                      className="w-1/2 cursor-pointer text-sm sm:text-lg p-2.5 bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300"
+                    >
+                      Add To Cart
+                    </button>
+                  )}
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>

@@ -24,12 +24,9 @@ export default function CartPage() {
       ),
     [cartItems]
   );
-  console.log(subtotal);
-
   const shippingCharges = 40;
 
   const handleProceedToCheckout = () => {
-    console.log("clicked");
     if (!cartItems.length) {
       toast.error("No Items In Your Cart");
       return;
@@ -93,7 +90,7 @@ export default function CartPage() {
                         dispatch(RemoveProductFromCart(p));
                         RemoveProductFromUserDetailsOnBackend(p);
                       }}
-                      className="p-2 cursor-pointer text-red-500 rounded-md bg-white border "
+                      className="p-2 cursor-pointer transition-all duration-300 hover:text-white hover:bg-[#bf2a28] text-[#bf2a28] rounded-md bg-white border "
                     >
                       <FiTrash2 />
                     </button>
@@ -101,17 +98,17 @@ export default function CartPage() {
                   <p className="text-sm text-gray-700 mt-1">Rs {p.price}</p>
 
                   <div className="mt-3 flex items-center gap-3">
-                    <div className="flex items-center rounded-full border border-[#e9e6e2] overflow-hidden">
+                    <div className="flex items-center overflow-hidden">
                       <button
                         onClick={() => dispatch(DecreaseQuantity(p))}
-                        className="p-3 cursor-pointer"
+                        className="p-1.5 border hover:bg-gray-200 rounded-md cursor-pointer"
                       >
                         <FiMinus />
                       </button>
                       <div className="px-4 py-3">{p.quantity}</div>
                       <button
                         onClick={() => dispatch(IncreaseQuantity(p))}
-                        className="p-3 cursor-pointer"
+                        className="p-1.5 border rounded-md hover:bg-gray-200 transition-all duration-300 cursor-pointer"
                       >
                         <FiPlus />
                       </button>
@@ -187,7 +184,7 @@ export default function CartPage() {
               }}
               disabled={!cartItems.length || subtotal < 200 ? true : false}
               className={`mt-6 w-full rounded-xl py-3 font-bold text-white ${
-                !cartItems.length || subtotal > 200
+                !cartItems.length || subtotal >= 200
                   ? "bg-[#bf2a28] hover:bg-[#e5ac55] cursor-pointer"
                   : "bg-gray-400 cursor-not-allowed"
               }`}

@@ -23,8 +23,8 @@ const Cart = ({ isDrawerOpen, setisDrawerOpen }) => {
       </div>
       {/* cart contents */}
       <div className="flex-grow p-4  overflow-y-auto">
-        <div className="flex justify-between">
-          <p className="text-xl font-semibold mb-4 ">Your Cart</p>
+        <div className="flex justify-between items-center text-center">
+          <p className="text-xl font-semibold ">Your Cart</p>
           <button onClick={()=>{
             navigate("/cart")
             setisDrawerOpen(false)
