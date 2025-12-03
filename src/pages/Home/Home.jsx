@@ -187,7 +187,7 @@ export default function Home() {
         </motion.div>
       </div>
 
-      <WhatWeDo/>
+      <WhatWeDo />
 
       <ProductsWeServe />
 

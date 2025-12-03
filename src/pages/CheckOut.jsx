@@ -20,6 +20,7 @@ const DESIGN_SCREENSHOT =
 export default function Checkout() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.userinfo);
+  console.log(user);
   const cartItems = useSelector((state) => state.cart.cartItems);
   const navigate = useNavigate();
   const [isTermsAndConditions, setisTermsAndConditions] = useState(false);
@@ -44,7 +45,7 @@ export default function Checkout() {
         city,
         zipCode,
         cartItems,
-        TotalPrice: subtotal + shippingCharges,
+        TotalPrice: subtotal + subtotal <= 350 ? shippingCharges : 0,
       },
       { withCredentials: true }
     );
