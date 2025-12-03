@@ -3,7 +3,7 @@ import Lenis from "@studio-freight/lenis";
 import Footer from "./layout/Footer";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Header from "./layout/Header";
-import Home from "./pages/Home";
+import Home from "./pages/Home/Home";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
 import "./App.css";

@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   AddProductToUserDetailsOnBackend,
   checkIsProductAlreadyInCart,
-} from "./Home";
+} from "./Home/Home";
 import { useNavigate } from "react-router-dom";
 
 export default function Products() {

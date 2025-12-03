@@ -1,19 +1,33 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import rusk from "../assets/products/rusk.png";
-import bread from "../assets/products/bread.png";
-import biscuits from "../assets/products/buscuits.png";
-import cake from "../assets/products/cake.png";
-import cupcakes from "../assets/products/cupcakes.png";
-import sweets from "../assets/products/sweets.png";
-import namkeen from "../assets/products/namkeen.png";
-import breadlogo from "../assets/logos/breadLogo.png";
+import rusk from "../../assets/products/rusk.png";
+import bread from "../../assets/products/bread.png";
+import biscuits from "../../assets/products/buscuits.png";
+import cake from "../../assets/products/cake.png";
+import cupcakes from "../../assets/products/cupcakes.png";
+import sweets from "../../assets/products/sweets.png";
+import namkeen from "../../assets/products/namkeen.png";
+import breadlogo from "../../assets/logos/breadLogo.png";
 import { useDispatch, useSelector } from "react-redux";
-import { AddProductToCart } from "../redux/slices/CartSlice";
+import { AddProductToCart } from "../../redux/slices/CartSlice";
 import axios from "axios";
-import { backendUrl } from "../assets/constant";
+import { backendUrl } from "../../assets/constant";
 import { toast } from "sonner";
+import {
+  Heart,
+  Package,
+  ShoppingBag,
+  Star,
+  Target,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import ProductionAndSales from "./components/ProductsAndSell";
+import ProductsWeServe from "./components/WhatPrductsWeSell";
+import OurGoals from "./components/OurGoals";
+import Reviews from "./components/Reviews";
+import WhatWeDo from "./components/WhatWeDo";
 
 export const checkIsProductAlreadyInCart = (e) => {
   const cartItems = useSelector((state) => state.cart.cartItems);
@@ -46,6 +60,30 @@ export default function Home() {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const parent = {
+    visible: {
+      transition: { staggerChildren: 0.15 },
+    },
+  };
+
+  const leftToRight = {
+    hidden: { x: -50, opacity: 0 },
+    visible: {
+      x: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 120, damping: 15 },
+    },
+  };
+
+  const rightToLeft = {
+    hidden: { x: 50, opacity: 0 },
+    visible: {
+      x: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 120, damping: 15 },
+    },
+  };
+
   let products = [
     {
       title: "Rusk",
@@ -143,27 +181,15 @@ export default function Home() {
           transition={{ duration: 1 }}
           className="flex justify-center items-center flex-col"
         >
-          <p className="lg:text-6xl md:text-5xl transition-all duration-300 text-4xl text-[#e5ac55] font-bold my-5">
+          <p className="lg:text-6xl md:text-5xl transition-all duration-300 text-4xl text-[#e5ac55] font-bold">
             Quality Is Our Priority
           </p>
-
-          <div className="w-full flex flex-col justify-center items-center gap-2.5 gap-y-5">
-            <img
-              src={breadlogo}
-              alt=""
-              className="min-w-[200px] aspect-square animateUpDown"
-            />
-            <Link
-              to={"/menu"}
-              className="bg-[#bf2a28] rounded-xl min-w-[200px] w-[80%]  md:w-auto mt-5 hover:rounded-4xl transition-all duration-300 text-white px-10 py-4 text-xl font-bold hover:opacity-90 cursor-pointer"
-            >
-              View Menu
-            </Link>
-          </div>
         </motion.div>
       </div>
 
-      
+      <WhatWeDo/>
+
+      <ProductsWeServe />
 
       <div id="menu" className="py-10">
         <motion.p
@@ -356,6 +382,12 @@ export default function Home() {
           ))}
         </div>
       </div>
+
+      <ProductionAndSales />
+
+      <OurGoals />
+
+      <Reviews />
     </div>
   );
 }

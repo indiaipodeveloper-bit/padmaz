@@ -23,15 +23,20 @@ const Cart = ({ isDrawerOpen, setisDrawerOpen }) => {
       </div>
       {/* cart contents */}
       <div className="flex-grow p-4  overflow-y-auto">
-        <div className="flex justify-between items-center text-center">
-          <p className="text-xl font-semibold ">Your Cart</p>
-          <button onClick={()=>{
-            navigate("/cart")
-            setisDrawerOpen(false)
-          }} className="text-red-500 hover:underline cursor-pointer hover:text-red-400" >
-            Go To Cart
-          </button>
-        </div>
+        {cartItems.length !== 0 && (
+          <div className="flex justify-between items-center text-center">
+            <p className="text-xl font-semibold ">Your Cart</p>
+            <button
+              onClick={() => {
+                navigate("/cart");
+                setisDrawerOpen(false);
+              }}
+              className="text-red-500 hover:underline cursor-pointer hover:text-red-400"
+            >
+              Go To Cart
+            </button>
+          </div>
+        )}
         <CartComponent />
       </div>
       <>

@@ -8,8 +8,7 @@ import { toast } from "sonner";
 
 export default function MyOrders() {
   const navigate = useNavigate();
-  const myOrder = useSelector((state) => state.auth.userinfo.orderHistory
-);
+  const myOrder = useSelector((state) => state.auth.userinfo.orderHistory);
   const [expanded, setExpanded] = useState({});
   const [loadingCancel, setLoadingCancel] = useState(null);
 
@@ -26,7 +25,7 @@ export default function MyOrders() {
           transition={{ duration: 0.8 }}
         >
           <p className="lg:text-5xl md:text-4xl text-3xl text-[#e5ac55] font-bold my-5">
-            My Orders
+            Purchase History
           </p>
           <p className="text-sm text-gray-500">
             Track, review or cancel your recent orders
@@ -54,7 +53,7 @@ export default function MyOrders() {
           </motion.div>
         ) : (
           <div className="grid gap-6">
-            {myOrder.map((order) => (
+            {myOrder.map((order, i) => (
               <motion.div
                 key={order._id}
                 initial={{ y: 20, opacity: 0 }}
@@ -64,11 +63,11 @@ export default function MyOrders() {
               >
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between p-4 gap-4">
                   <div className="flex-1 text-start">
-                    <p className="text-lg font-bold">Order #{order._id}</p>
+                    <p className="text-lg font-bold">Order {i + 1}</p>
                     <p className="text-sm text-gray-600">
                       Placed: {new Date(order.createdAt).toLocaleString()}
                     </p>
-                    <p className="text-sm mt-2">Shipping: {order.address}</p>
+                    <p className="text-sm mt-2">Shipping Address : {order.address}</p>
                     <div className="mt-2 inline-flex items-center gap-3">
                       <span className="px-3 py-1 rounded-full text-sm font-semibold bg-[#e5ac55]/20 text-[#e5ac55]">
                         {order.status}
