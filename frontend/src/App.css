@@ -1,0 +1,24 @@
+@import url("https://fonts.googleapis.com/css2?family=Elms+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+
+* {
+  font-family: "Elms Sans", sans-serif;
+}
+.socials:hover {
+  transform: rotateZ("60deg");
+}
+
+@keyframes updown {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.updown-animation {
+  animation: updown 2s ease-in-out infinite;
+}
