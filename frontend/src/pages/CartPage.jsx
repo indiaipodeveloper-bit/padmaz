@@ -170,7 +170,16 @@ export default function CartPage() {
 
               <div className="flex justify-between">
                 <span>Shipping charges</span>
-                <span>Rs {shippingCharges}</span>
+                <div className="flex flex-col items-end">
+                  <span
+                    className={`${
+                      subtotal > 350 ? "line-through text-red-500" : ""
+                    } text-lg font-semibold`}
+                  >
+                    {shippingCharges}
+                  </span>
+                  {subtotal > 350 && <span className="text-sm">Free Delivery</span>}
+                </div>
               </div>
 
               <div className="flex justify-between font-bold text-lg mt-3">

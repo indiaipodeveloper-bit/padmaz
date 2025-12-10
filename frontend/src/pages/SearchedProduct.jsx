@@ -1,12 +1,9 @@
 import React from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import {
-  AddProductToUserDetailsOnBackend,
-  checkIsProductAlreadyInCart,
-} from "./Home/Home";
+import { AddProductToUserDetailsOnBackend } from "./Home/Home";
 import { AddProductToCart } from "../redux/slices/CartSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { backendUrl } from "../assets/constant";
 const SearchedProduct = () => {
   const navigate = useNavigate();
@@ -18,6 +15,17 @@ const SearchedProduct = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
   const productName = searchParams.get("product");
+  const cartItems = useSelector((state) => state.cart.cartItems);
+
+  const checkIsProductAlreadyInCart = (items, e) => {
+    let item = items.find((item) => {
+      return item._id == e._id;
+    });
+    if (!!item) {
+      return true;
+    }
+    return false;
+  };
   return (
     <div className="p-10 sm:ml-10">
       <div className="text-start text-3xl py-10">
@@ -48,7 +56,7 @@ const SearchedProduct = () => {
                 Rs {item.price}
               </span>
               <div className="flex flex-col my-2.5 gap-2.5 justify-between">
-                {checkIsProductAlreadyInCart(item) ? (
+                {checkIsProductAlreadyInCart(cartItems, item) ? (
                   <button
                     onClick={() => navigate("/cart")}
                     className="p-2.5 cursor-pointer text-sm sm:w-[200px] w-full sm:text-lg bg-[#bf2a28] hover:bg-[#e5ac55] text-white font-bold py-3 rounded-md transition-all duration-300"

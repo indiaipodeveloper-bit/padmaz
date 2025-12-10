@@ -12,11 +12,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import axios from "axios";
 import { backendUrl } from "../assets/constant";
-import { DecreaseQuantity, IncreaseQuantity } from "../redux/slices/CartSlice";
+import { DecreaseQuantity, IncreaseQuantity, SetCartItems } from "../redux/slices/CartSlice";
 import { RemoveProductFromUserDetailsOnBackend } from "./Cart/CartComponent";
 
-const DESIGN_SCREENSHOT =
-  "/mnt/data/A_checkout_page_for_an_online_furniture_store_is_d.png";
 
 export default function Checkout() {
   const dispatch = useDispatch();
@@ -51,6 +49,7 @@ export default function Checkout() {
     );
     if (res.status == 200) {
       toast.success(res.data.msg);
+      dispatch(SetCartItems([]))
       navigate("/", { replace: true });
     }
   };
@@ -112,11 +111,6 @@ export default function Checkout() {
         <div className="lg:col-span-2 w-full p-10 lg:p-14">
           <div className="flex items-center flex-wrap justify-between mb-8">
             <div className="flex flex-wrap items-center gap-6">
-              <img
-                src={DESIGN_SCREENSHOT}
-                alt="logo"
-                className="w-28 h-20 object-cover rounded-md shadow-sm"
-              />
               <p className="text-3xl font-extrabold tracking-tight text-[#2b2b2b]">
                 Checkout
               </p>

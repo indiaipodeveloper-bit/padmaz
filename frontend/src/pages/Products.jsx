@@ -24,6 +24,8 @@ export default function Products() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  
+
   const AddProductToUserDetailsOnBackend = (bodyitem = {}) => {
     if (!isAuthenticated) {
       navigate("/auth");
@@ -111,7 +113,7 @@ export default function Products() {
                           <div className="">
                             <p className="text-xl font-bold">{item.title}</p>
                             <p className="text-sm">{item.description}</p>
-                            <p className="text-xl flex  items-center my-2.5 font-bold ">
+                            <p className="text-xl flex  items-center my-2.5 font-bold">
                               <span>
                                 <FaRupeeSign />
                               </span>
@@ -153,7 +155,6 @@ export default function Products() {
             </Carousel>
           </div>
         </div>
-
 
         <div className="">
           <div className="text-5xl text-[#bf2a28] font-bold text-center my-5">
@@ -228,7 +229,6 @@ export default function Products() {
           </div>
         </div>
 
-
         <div className="">
           <div className="text-5xl text-[#bf2a28] font-bold text-center my-5">
             <p className="">Cookies</p>
@@ -301,8 +301,6 @@ export default function Products() {
             </Carousel>
           </div>
         </div>
-
-
 
         <div className="">
           <div className="text-5xl text-[#bf2a28] font-bold text-center my-5">
