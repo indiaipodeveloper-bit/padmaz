@@ -12,9 +12,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import axios from "axios";
 import { backendUrl } from "../assets/constant";
-import { DecreaseQuantity, IncreaseQuantity, SetCartItems } from "../redux/slices/CartSlice";
+import {
+  DecreaseQuantity,
+  IncreaseQuantity,
+  SetCartItems,
+} from "../redux/slices/CartSlice";
 import { RemoveProductFromUserDetailsOnBackend } from "./Cart/CartComponent";
-
 
 export default function Checkout() {
   const dispatch = useDispatch();
@@ -33,24 +36,52 @@ export default function Checkout() {
   const shippingCharges = 40;
 
   const PlaceOrder = async () => {
-    const res = await axios.post(
-      `${backendUrl}/api/order/place-order`,
-      {
-        name,
-        email,
-        phoneNumber,
-        address,
-        city,
-        zipCode,
-        cartItems,
-        TotalPrice: subtotal <= 350 ? subtotal + shippingCharges : subtotal,
-      },
-      { withCredentials: true }
-    );
-    if (res.status == 200) {
-      toast.success(res.data.msg);
-      dispatch(SetCartItems([]))
-      navigate("/", { replace: true });
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/order/place-order`,
+        {
+          name,
+          email,
+          phoneNumber,
+          address,
+          city,
+          zipCode,
+          cartItems,
+          // TotalPrice: subtotal <= 350 ? subtotal + shippingCharges : subtotal,
+          TotalPrice: 1,
+        },
+        { withCredentials: true }
+      );
+      console.log(data);
+      const options = {
+        key: data.key_id,
+        amount: data.amount,
+        currency: "INR",
+        name: "Padma'Z",
+        description: "Test Transaction",
+        order_id: data.id,
+        callback_url: `${backendUrl}/api/order/payment-verification`,
+        prefill: {
+          name: name,
+          email: email,
+          contact: phoneNumber,
+        },
+        theme: {
+          color: "#F37254",
+        },
+      };
+
+      const razorPayPaymentDialogue = new Razorpay(options);
+      razorPayPaymentDialogue.open();
+      console.log(razorPayPaymentDialogue);
+      if (res.status == 201) {
+        toast.success("Order Placed Successfully");
+        dispatch(SetCartItems([]));
+        navigate("/", { replace: true });
+      }
+    } catch (error) {
+      console.log(error);
+      // toast.error(error.response.data);
     }
   };
 

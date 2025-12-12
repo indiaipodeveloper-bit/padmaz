@@ -1,14 +1,17 @@
 import express, { Router } from "express";
 import { CheckUserLoggedIn } from "../middleware/Auth.js";
-import { PlaceOrder } from "../controllers/OrderController.js";
+import {
+  CreateOrderForRazorpay,
+  VerifyPaymentAndConfirmOrder,
+} from "../controllers/OrderController.js";
 
-const router:Router = Router();
+const router: Router = Router();
 
-router.post("/place-order",PlaceOrder)
+router.post("/place-order", CheckUserLoggedIn, CreateOrderForRazorpay);
+router.post(
+  "/payment-verification",
+  CheckUserLoggedIn,
+  VerifyPaymentAndConfirmOrder
+);
 
-
-
-
-
-
-export {router as OrderRouter}
+export { router as OrderRouter };

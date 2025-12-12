@@ -13,10 +13,11 @@ const maxAge = 3 * 24 * 60 * 60 * 1000;
 
 const PORT = process.env.PORT || 5000;
 
-const app:Application = express();
+const app: Application = express();
 
-app.use(express.json())
+app.use(express.json());
 app.use(cookieParser());
+app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -26,18 +27,16 @@ app.use(
   })
 );
 
-
 app.use("/uploads/products", express.static("uploads/products"));
 
-app.use("/api/auth",AuthRouter)
-app.use("/api/cart",CheckUserLoggedIn,CartRouter)
-app.use("/api/products",ProductRouter)
-app.use("/api/order",CheckUserLoggedIn,OrderRouter)
+app.use("/api/auth", AuthRouter);
+app.use("/api/cart", CheckUserLoggedIn, CartRouter);
+app.use("/api/products", ProductRouter);
+app.use("/api/order", CheckUserLoggedIn, OrderRouter);
 
-
-app.get("/",(req,res)=>{
-    return res.send("padmaz ecommerce backend")
-})
+app.get("/", (req, res) => {
+  return res.send("padmaz ecommerce backend");
+});
 
 connectDB(process.env.DB_URI || "mongodb://127.0.0.1:27017/padmaz").then(() => {
   console.log("db connected");

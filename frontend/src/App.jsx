@@ -9,7 +9,7 @@ import About from "./pages/About";
 import "./App.css";
 import Products from "./pages/Products";
 import Auth from "./pages/Auth";
-import axios, { all } from "axios";
+import axios from "axios";
 import { backendUrl } from "./assets/constant";
 import { useDispatch, useSelector } from "react-redux";
 import { setUserInfo } from "./redux/slices/AuthSlice";
@@ -100,7 +100,7 @@ export default function App() {
           />
           <Route path="/menu" element={<Products />} />
 
-           <Route path="/search" element={<SearchedProduct />} />
+          <Route path="/search" element={<SearchedProduct />} />
 
           <Route
             path="/cart"

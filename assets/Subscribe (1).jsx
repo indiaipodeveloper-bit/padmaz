@@ -1,0 +1,395 @@
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import Page from "../components/Page.jsx";
+import { API } from "../api.js";
+import indiaIPOLogo from "../assets/ipologo2.png";
+
+const MONTHLY_PRICE = {
+  digital: 199,
+  hindi_digital: 199,
+  print_only: 275,
+  print: 349,
+};
+
+
+
+
+
+export default function Subscribe() {
+  const nav = useNavigate();
+  const [planKey, setPlanKey] = useState("digital_annual");
+  const [termYears, setTermYears] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
+  const [rzpReady, setRzpReady] = useState(!!window.Razorpay);
+  const [address, setAddress] = useState({
+    name: "",
+    phone: "",
+    line1: "",
+    line2: "",
+    city: "",
+    state: "",
+    pincode: "",
+  });
+  const [me, setMe] = useState(null);
+  const [activeTab, setActiveTab] = useState("english");
+  const isActiveStatus = (status) =>
+    typeof status === "string" && status.toLowerCase() === "active";
+
+  const isAnnual = planKey.endsWith("_annual");
+  const needsAddress = planKey.startsWith("print_");
+  const hasActive = isActiveStatus(me?.subscriptionStatus);
+  const isCurrentSelected = hasActive && me?.planKey === planKey;
+
+  const adsConvFiredRef = useRef(false);
+
+  useEffect(() => {
+    if (adsConvFiredRef.current) return;
+    adsConvFiredRef.current = true;
+    try {
+      if (typeof window !== "undefined" && typeof window.gtag === "function") {
+        window.gtag("event", "conversion", {
+          send_to: "AW-16865507345/VSxgCMvO_KcbEJHwjOo-",
+        });
+      } else if (typeof window !== "undefined") {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: "ads_conversion_subscribe",
+          send_to: "AW-16865507345/VSxgCMvO_KcbEJHwjOo-",
+          page_path: "/subscribe",
+        });
+      }
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    if (!window.Razorpay) {
+      const s = document.createElement("script");
+      s.src = "https://checkout.razorpay.com/v1/checkout.js";
+      s.onload = () => setRzpReady(true);
+      s.onerror = () => setErr("Failed to load Razorpay");
+      document.body.appendChild(s);
+    } else {
+      setRzpReady(true);
+    }
+    API.get("/auth/me")
+      .then(({ data }) => {
+        setMe(data);
+        if (
+          isActiveStatus(data.subscriptionStatus) &&
+          data.planKey &&
+          data.planKey.endsWith("_annual")
+        ) {
+          setPlanKey(data.planKey);
+          setActiveTab(tabFromKey(data.planKey));
+          setTermYears(1);
+        } else {
+          setActiveTab(tabFromKey("digital_annual"));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const validateAddress = () => {
+    if (!needsAddress) return true;
+    const required = ["name", "phone", "line1", "city", "state", "pincode"];
+    const missing = required.filter((k) => !address[k]?.trim());
+    if (missing.length) {
+      setErr("Please fill: " + missing.join(", "));
+      return false;
+    }
+    return true;
+  };
+
+
+  const startOneTime = async () => {
+    const payload = { planKey, years: termYears };
+    if (needsAddress) payload.address = address;
+    const { data } = await API.post("/pay/create-order", payload);
+    const rzp = new window.Razorpay({
+      key: data.key,
+      order_id: data.orderId,
+      name: "India IPO Magazine",
+      description: `${termYears}-Year Access`,
+      handler: function (response) {
+        API.post("/pay/confirm", {
+          orderId: response.razorpay_order_id,
+          paymentId: response.razorpay_payment_id,
+          signature: response.razorpay_signature,
+        })
+          .then(() => {
+            nav("/library");
+          })
+          .catch((e) => {
+            const msg =
+              e?.response?.data?.error ||
+              e?.message ||
+              "Failed to confirm payment";
+            setErr(msg);
+          });
+      },
+      theme: { color: "#111827" },
+      modal: {
+        ondismiss: () => {
+          setErr("");
+          setPlanKey(me?.planKey || "digital_annual");
+          setActiveTab(tabFromKey(me?.planKey || "digital_annual"));
+        },
+      },
+    });
+    rzp.on("payment.failed", (resp) => {
+      setErr(resp?.error?.description || "Payment failed");
+      setPlanKey(me?.planKey || "digital_annual");
+      setActiveTab(tabFromKey(me?.planKey || "digital_annual"));
+    });
+    rzp.open();
+  };
+
+
+  const pay = async () => {
+    setErr("");
+    if (!rzpReady) {
+      setErr("Payment is initializing. Please try again in a second.");
+      return;
+    }
+    if (!validateAddress()) return;
+    setLoading(true);
+    try {
+      if (isAnnual) {
+        await startOneTime();
+      } else {
+        await startSubscription();
+      }
+    } catch (e) {
+      setErr(e?.response?.data?.error || "Failed to start payment");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addrField = (k, p, t = "text") => (
+    <input
+      className="input"
+      type={t}
+      placeholder={p}
+      value={address[k]}
+      onChange={(e) => setAddress({ ...address, [k]: e.target.value })}
+      required={needsAddress}
+    />
+  );
+
+  const shownPlans = activeTab === "hindi" ? HINDI_PLANS : ENGLISH_PLANS;
+
+  const onSwitchTab = (tab) => {
+    setActiveTab(tab);
+    const isHindi = tab === "hindi";
+    const validKeys = (isHindi ? HINDI_PLANS : ENGLISH_PLANS).map((p) => p.key);
+    if (!validKeys.includes(planKey)) {
+      const fallback = isHindi ? "hindi_digital_annual" : "digital_annual";
+      setPlanKey(fallback);
+      setTermYears(1);
+    }
+  };
+
+  return (
+    <Page
+      title={
+        <div className="flex  my-5 gap-x-5 gap-y-2 items-center">
+          <img
+            src={indiaIPOLogo}
+            alt=""
+            className="aspect-square h-[70px] mdx:m-0 m-auto"
+          />
+          <p className="font-bold text-xl lg:text-3xl">IPO World Magazine</p>
+        </div>
+      }
+    >
+      <div className="flex flex-col mx-auto justify-center items-center pb-16">
+        {hasActive && (
+          <div className="mb-4 rounded-xl border border-green-200 bg-green-50 p-3 text-sm">
+            <span className="font-medium">Active plan:</span>{" "}
+            {PLAN_LABEL[me?.planKey] || "—"}
+          </div>
+        )}
+
+        <div className="mb-4  flex w-full max-w-2xl rounded-full border border-slate-200 bg-white p-1">
+          <button
+            type="button"
+            onClick={() => onSwitchTab("english")}
+            className={`flex-1 rounded-full px-4 py-2 text-sm font-semibold ${
+              activeTab === "english"
+                ? "bg-slate-900 text-white"
+                : "text-slate-700 hover:bg-slate-50"
+            }`}
+          >
+            English
+          </button>
+          <button
+            type="button"
+            onClick={() => onSwitchTab("hindi")}
+            className={`flex-1 rounded-full px-4 py-2 text-sm font-semibold ${
+              activeTab === "hindi"
+                ? "bg-slate-900 text-white"
+                : "text-slate-700 hover:bg-slate-50"
+            }`}
+          >
+            हिंदी
+          </button>
+        </div>
+
+        <div className="grid w-full max-w-3xl grid-cols-1 gap-4 md:grid-cols-2">
+          {shownPlans.map((p) => {
+            const selected = planKey === p.key;
+            const isThisAnnual = p.key.endsWith("_annual");
+            const thisType = planTypeFromKey(p.key);
+            const isUserCurrentPlan = p.key === me?.planKey;
+
+            const cardTerm = isThisAnnual ? termYears : 1;
+
+            let cardCompareAt = null;
+            let cardActual = null;
+            let cardDiscount = "";
+
+            if (isThisAnnual) {
+              const base = 12 * MONTHLY_PRICE[thisType] * cardTerm;
+              const disc = DISCOUNT_PCT[cardTerm] || 0;
+              cardCompareAt = base;
+              cardActual = Math.round(base * (1 - disc / 100));
+              cardDiscount = disc ? `(${disc}% off)` : "";
+            } else {
+              cardActual = MONTHLY_PRICE[thisType];
+            }
+
+            return (
+              <label
+                key={p.key}
+                className={`cursor-pointer rounded-2xl p-4 transition border ${
+                  isUserCurrentPlan
+                    ? "border-green-600 bg-green-50 shadow"
+                    : selected
+                    ? "border-slate-900 shadow-lg"
+                    : "border-slate-200 hover:shadow"
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <input
+                    type="radio"
+                    name="plan"
+                    className="mt-1"
+                    checked={selected}
+                    onChange={() => {
+                      setPlanKey(p.key);
+                      if (p.key.endsWith("_annual")) setTermYears(1);
+                      const nextTab = tabFromKey(p.key);
+                      if (nextTab !== activeTab) setActiveTab(nextTab);
+                    }}
+                  />
+                  <div className="flex-1">
+                    <div className="font-semibold">{p.label}</div>
+                    {isUserCurrentPlan && (
+                      <div className="text-green-700 text-xs font-medium mt-1">
+                        (Your current plan)
+                      </div>
+                    )}
+                    {isThisAnnual ? (
+                      <div className="mt-1 text-sm">
+                        <span className="line-through mr-2 text-slate-500">
+                          ₹{fmt.format(cardCompareAt || 0)}
+                        </span>
+                        <span className="font-semibold">
+                          ₹{fmt.format(cardActual || 0)} /{" "}
+                          {cardTerm > 1 ? `${cardTerm} yrs` : "yr"}
+                        </span>{" "}
+                        {cardDiscount && (
+                          <span className="text-xs text-green-700">
+                            {cardDiscount}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="mt-1 text-sm">
+                        <span className="font-semibold">
+                          ₹{fmt.format(cardActual || 0)} / month
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </label>
+            );
+          })}
+        </div>
+
+        {isAnnual && (
+          <div className="mt-4 flex items-center flex-wrap justify-center gap-2">
+            <span className="text-lg">Tenure:</span>
+            <div className="flex gap-5 justify-center flex-wrap">
+              {[1, 2, 3].map((y, i) => (
+                <div
+                  key={y}
+                  className="flex flex-col justify-center items-center gap-2.5"
+                >
+                  <button
+                    onClick={() => setTermYears(y)}
+                    className={`rounded-full border px-3 py-1 text-lg font-semibold ${
+                      termYears === y
+                        ? "border-slate-900 bg-slate-900 text-white"
+                        : "border-slate-300 hover:bg-slate-50"
+                    }`}
+                  >
+                    {y} {y > 1 ? "years" : "year"}
+                  </button>
+                  <span className="text-green-700">{`(${
+                    DISCOUNT_PCT[i + 1]
+                  }% off)`}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {needsAddress && (
+          <div className="mt-6 w-full max-w-3xl rounded-xl border p-4">
+            <div className="mb-2 font-semibold">Shipping address</div>
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+              {addrField("name", "Full name")}
+              {addrField("phone", "Phone")}
+              {addrField("line1", "Address line 1")}
+              {addrField("line2", "Address line 2 (optional)")}
+              {addrField("city", "City")}
+              {addrField("state", "State")}
+              {addrField("pincode", "Pincode")}
+            </div>
+          </div>
+        )}
+
+        <div className="mt-6">
+          {err && <div className="text-red-600 text-sm">{err}</div>}
+          <div className="flex gap-3 flex-wrap">
+            <button
+              className="btn"
+              onClick={pay}
+              disabled={
+                loading ||
+                !rzpReady ||
+                (isAnnual && isCurrentSelected && termYears === 1)
+              }
+            >
+              {loading
+                ? "Starting…"
+                : isAnnual
+                ? `Pay-One-Time (${termYears} yr${termYears > 1 ? "s" : ""}) →`
+                : "Pay Now →"}
+            </button>
+
+            {hasActive && (
+              <button className="btn-secondary" onClick={() => nav("/library")}>
+                Go to Library
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </Page>
+  );
+}

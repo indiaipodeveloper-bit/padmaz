@@ -33,7 +33,7 @@ const orderModel = new mongoose.Schema(
     },
 
     status: {
-      type: String,
+      type: String || null,
       enum: [
         "Processing",
         "Shipped",
@@ -47,6 +47,21 @@ const orderModel = new mongoose.Schema(
       type: Number,
       required: true,
     },
+
+    orderId: { type: String },
+
+    paymentId: { type: String },
+
+    signature: { type: String },
+
+    currency: { type: String, default: "INR" },
+
+    paymentStatus: {
+      type: String,
+      enum: ["PENDING", "PAID", "FAILED", "REFUNDED"],
+      default: "PENDING",
+    },
+
     OrderedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
